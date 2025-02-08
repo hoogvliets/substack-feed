@@ -1,0 +1,40 @@
+name: Sync Substack and Build Site
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Runs every 6 hours
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  sync-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install feedparser markdown2 python-frontmatter
+
+      - name: Sync Substack posts
+        run: python .github/scripts/sync_substack.py
+        env:
+          SUBSTACK_RSS_URL: ${{ secrets.SUBSTACK_RSS_URL }}
+
+      - name: Build and Deploy
+        uses: jeffreytse/jekyll-deploy-action@v0.5.1
+        with:
+          provider: 'github'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: 'gh-pages' 
