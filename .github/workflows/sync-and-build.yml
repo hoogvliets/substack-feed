@@ -1,9 +1,9 @@
 name: Sync Substack and Build Site
 
-on:
-  schedule:
-    - cron: '0 */6 * * *'  # Runs every 6 hours
-  workflow_dispatch:  # Allows manual trigger
+#on:
+#  schedule:
+#    - cron: '0 */6 * * *'  # Runs every 6 hours
+#  workflow_dispatch:  # Allows manual trigger
 
 jobs:
   sync-and-build:
